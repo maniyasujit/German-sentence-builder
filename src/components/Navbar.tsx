@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom';
 import {
   BookOpen,
   ClipboardList,
+  CalendarCheck,
   Home,
   Layers,
   NotebookTabs,
@@ -13,11 +14,14 @@ import {
 
 const navItems = [
   { to: '/', label: 'Home', icon: Home },
+  { to: '/today', label: "Today’s Practice", icon: CalendarCheck },
+  { to: '/my-vocabulary', label: 'My Vocabulary', icon: BookOpen },
+  { to: '/practice-from-text', label: 'Practice From Text', icon: PenLine },
   { to: '/sentence-builder', label: 'Sentence Builder', icon: Layers },
   { to: '/case-helper', label: 'Case Helper', icon: ClipboardList },
   { to: '/word-order', label: 'Word Order', icon: Route },
   { to: '/missions', label: 'Missions', icon: Sparkles },
-  { to: '/vocabulary', label: 'Vocabulary', icon: BookOpen },
+  { to: '/vocabulary', label: 'Vocabulary Examples', icon: BookOpen },
   { to: '/writing', label: 'Writing', icon: PenLine },
   { to: '/mistakes', label: 'Mistakes', icon: NotebookTabs },
   { to: '/progress', label: 'Progress', icon: ScrollText },

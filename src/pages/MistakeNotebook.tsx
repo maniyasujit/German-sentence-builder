@@ -1,49 +1,42 @@
-import { FormEvent, useMemo, useState } from 'react';
-import { CheckCircle2, Filter, RefreshCcw, Trash2 } from 'lucide-react';
-import FeedbackBox from '../components/FeedbackBox';
-import { clearMistakes, getMistakes, setMistakeStatus } from '../utils/localStorage';
-import { isAnswerCorrect } from '../utils/answerCheck';
+import { useMemo, useState } from 'react';
+import { Filter, Trash2 } from 'lucide-react';
+import EmptyState from '../components/EmptyState';
+import MistakeReviewCard from '../components/MistakeReviewCard';
 import type { Mistake } from '../types';
+import { getMistakes, markMistakeReviewed, saveMistakes } from '../utils/storage';
 
 export default function MistakeNotebook() {
   const [mistakes, setMistakes] = useState<Mistake[]>(getMistakes());
   const [topicFilter, setTopicFilter] = useState('All topics');
-  const [retryId, setRetryId] = useState<string | null>(null);
-  const [retryAnswer, setRetryAnswer] = useState('');
-  const [retryResult, setRetryResult] = useState<'correct' | 'incorrect' | null>(null);
+  const [statusFilter, setStatusFilter] = useState('all');
 
   const topics = useMemo(
     () => ['All topics', ...Array.from(new Set(mistakes.map((mistake) => mistake.topic))).sort()],
     [mistakes],
   );
 
-  const filteredMistakes = topicFilter === 'All topics'
-    ? mistakes
-    : mistakes.filter((mistake) => mistake.topic === topicFilter);
+  const filteredMistakes = mistakes.filter((mistake) => {
+    const topicMatches = topicFilter === 'All topics' || mistake.topic === topicFilter;
+    const statusMatches =
+      statusFilter === 'all' ||
+      (statusFilter === 'due' && !mistake.isResolved && mistake.nextReviewAt <= new Date().toISOString().slice(0, 10)) ||
+      (statusFilter === 'open' && !mistake.isResolved) ||
+      (statusFilter === 'resolved' && mistake.isResolved);
 
-  function markReviewed(id: string) {
-    setMistakes(setMistakeStatus(id, 'reviewed'));
+    return topicMatches && statusMatches;
+  });
+
+  function refresh(next?: Mistake[]) {
+    setMistakes(next ?? getMistakes());
   }
 
   function clearAll() {
-    clearMistakes();
-    setMistakes([]);
-    setRetryId(null);
+    saveMistakes([]);
+    refresh([]);
   }
 
-  function startRetry(mistake: Mistake) {
-    setRetryId(mistake.id);
-    setRetryAnswer('');
-    setRetryResult(null);
-  }
-
-  function handleRetry(event: FormEvent, mistake: Mistake) {
-    event.preventDefault();
-    const correct = isAnswerCorrect(retryAnswer, mistake.correctAnswer);
-    setRetryResult(correct ? 'correct' : 'incorrect');
-    if (correct) {
-      setMistakes(setMistakeStatus(mistake.id, 'reviewed'));
-    }
+  function handleReviewed(id: string, wasCorrect: boolean) {
+    refresh(markMistakeReviewed(id, wasCorrect));
   }
 
   return (
@@ -51,10 +44,10 @@ export default function MistakeNotebook() {
       <section className="rounded-lg border border-stone-200 bg-white p-5 shadow-soft sm:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-normal text-coral">Local review</p>
+            <p className="text-sm font-semibold uppercase tracking-normal text-coral">Spaced review</p>
             <h1 className="mt-2 text-3xl font-semibold text-ink">Mistake Notebook</h1>
             <p className="mt-2 max-w-2xl text-stone-600">
-              Wrong answers from Sentence Builder, Case Helper, and Word Order Trainer are saved here with the grammar reason.
+              Mistakes from vocabulary, pasted text, sentence builder, word order, and case helper are scheduled for review.
             </p>
           </div>
 
@@ -74,6 +67,17 @@ export default function MistakeNotebook() {
                 ))}
               </select>
             </label>
+            <select
+              value={statusFilter}
+              onChange={(event) => setStatusFilter(event.target.value)}
+              className="min-h-11 rounded-lg border border-stone-300 bg-white px-3 text-sm font-semibold text-stone-700"
+              aria-label="Filter mistakes by status"
+            >
+              <option value="all">all</option>
+              <option value="due">due today</option>
+              <option value="open">open</option>
+              <option value="resolved">resolved</option>
+            </select>
             <button
               type="button"
               onClick={clearAll}
@@ -88,99 +92,43 @@ export default function MistakeNotebook() {
       </section>
 
       {filteredMistakes.length === 0 ? (
-        <section className="rounded-lg border border-dashed border-stone-300 bg-white p-8 text-center">
-          <h2 className="text-xl font-semibold text-ink">No mistakes here yet</h2>
-          <p className="mt-2 text-stone-600">Practise a few exercises. Any wrong answers will appear here for review.</p>
-        </section>
+        <EmptyState
+          title="No mistakes match this view"
+          description="Make a few practice attempts first. Wrong answers will appear here with review stages and next review dates."
+        />
       ) : (
         <div className="grid gap-4">
-          {filteredMistakes.map((mistake) => {
-            const retrying = retryId === mistake.id;
-            return (
-              <article key={mistake.id} className="rounded-lg border border-stone-200 bg-white p-5 shadow-sm">
-                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                  <div className="space-y-3">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="rounded-lg bg-slatewash px-3 py-1 text-sm font-semibold text-ink">
-                        {mistake.exerciseType}
-                      </span>
-                      <span className="rounded-lg bg-stone-100 px-3 py-1 text-sm text-stone-700">{mistake.topic}</span>
-                      <span
-                        className={[
-                          'rounded-lg px-3 py-1 text-sm font-semibold',
-                          mistake.status === 'reviewed'
-                            ? 'bg-emerald-50 text-emerald-700'
-                            : 'bg-amber-50 text-amber-700',
-                        ].join(' ')}
-                      >
-                        {mistake.status}
-                      </span>
-                    </div>
-                    <p className="text-sm text-stone-500">{new Date(mistake.date).toLocaleString()}</p>
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <div className="rounded-lg bg-rose-50 p-3">
-                        <p className="text-sm font-semibold text-rose-800">Your answer</p>
-                        <p className="mt-1 text-stone-800">{mistake.userAnswer}</p>
-                      </div>
-                      <div className="rounded-lg bg-emerald-50 p-3">
-                        <p className="text-sm font-semibold text-emerald-800">Correct answer</p>
-                        <p className="mt-1 text-stone-800">{mistake.correctAnswer}</p>
-                      </div>
-                    </div>
-                    <p className="text-sm leading-6 text-stone-700">{mistake.explanation}</p>
+          {filteredMistakes.map((mistake) => (
+            <article key={mistake.id} className="space-y-4">
+              <section className="rounded-lg border border-stone-200 bg-white p-5">
+                <div className="flex flex-wrap gap-2">
+                  <span className="rounded-lg bg-slatewash px-3 py-1 text-sm font-semibold text-ink">{mistake.source}</span>
+                  <span className="rounded-lg bg-stone-100 px-3 py-1 text-sm text-stone-700">{mistake.topic}</span>
+                  <span
+                    className={[
+                      'rounded-lg px-3 py-1 text-sm font-semibold',
+                      mistake.isResolved ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700',
+                    ].join(' ')}
+                  >
+                    {mistake.isResolved ? 'resolved' : `next review ${mistake.nextReviewAt}`}
+                  </span>
+                </div>
+                <h2 className="mt-4 text-xl font-semibold text-ink">{mistake.question}</h2>
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-lg bg-rose-50 p-3">
+                    <p className="text-sm font-semibold text-rose-800">Old wrong answer</p>
+                    <p className="mt-1 text-stone-800">{mistake.userAnswer}</p>
                   </div>
-
-                  <div className="flex shrink-0 flex-wrap gap-2">
-                    <button
-                      type="button"
-                      onClick={() => markReviewed(mistake.id)}
-                      className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-stone-300 bg-white px-3 text-sm font-semibold text-stone-700 hover:bg-slatewash"
-                    >
-                      <CheckCircle2 aria-hidden="true" size={16} />
-                      Mark reviewed
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => startRetry(mistake)}
-                      className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-ink px-3 text-sm font-semibold text-white hover:bg-fern"
-                    >
-                      <RefreshCcw aria-hidden="true" size={16} />
-                      Retry
-                    </button>
+                  <div className="rounded-lg bg-emerald-50 p-3">
+                    <p className="text-sm font-semibold text-emerald-800">Correct answer</p>
+                    <p className="mt-1 text-stone-800">{mistake.correctAnswer}</p>
                   </div>
                 </div>
-
-                {retrying ? (
-                  <form onSubmit={(event) => handleRetry(event, mistake)} className="mt-5 space-y-3 border-t border-stone-200 pt-4">
-                    <label className="block">
-                      <span className="text-sm font-semibold text-stone-700">Try the correct answer again</span>
-                      <textarea
-                        value={retryAnswer}
-                        onChange={(event) => setRetryAnswer(event.target.value)}
-                        rows={2}
-                        className="mt-2 w-full rounded-lg border border-stone-300 bg-white p-3 text-base"
-                      />
-                    </label>
-                    <button
-                      type="submit"
-                      className="min-h-10 rounded-lg bg-ink px-4 text-sm font-semibold text-white hover:bg-fern"
-                    >
-                      Check retry
-                    </button>
-                    <FeedbackBox
-                      result={retryResult}
-                      correctAnswer={mistake.correctAnswer}
-                      explanation={
-                        retryResult === 'correct'
-                          ? 'Nice recovery. This mistake has been marked as reviewed.'
-                          : mistake.explanation
-                      }
-                    />
-                  </form>
-                ) : null}
-              </article>
-            );
-          })}
+                <p className="mt-3 text-sm leading-6 text-stone-700">{mistake.explanation}</p>
+              </section>
+              {!mistake.isResolved ? <MistakeReviewCard mistake={mistake} onReviewed={handleReviewed} /> : null}
+            </article>
+          ))}
         </div>
       )}
     </div>

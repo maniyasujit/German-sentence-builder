@@ -4,8 +4,11 @@ import CaseHelper from './pages/CaseHelper';
 import Home from './pages/Home';
 import MistakeNotebook from './pages/MistakeNotebook';
 import Missions from './pages/Missions';
+import MyVocabulary from './pages/MyVocabulary';
+import PracticeFromText from './pages/PracticeFromText';
 import Progress from './pages/Progress';
 import SentenceBuilder from './pages/SentenceBuilder';
+import TodaysPractice from './pages/TodaysPractice';
 import VocabularyContext from './pages/VocabularyContext';
 import WordOrderTrainer from './pages/WordOrderTrainer';
 import WritingPractice from './pages/WritingPractice';
@@ -16,6 +19,9 @@ export default function App() {
       <Route element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="/sentence-builder" element={<SentenceBuilder />} />
+        <Route path="/today" element={<TodaysPractice />} />
+        <Route path="/my-vocabulary" element={<MyVocabulary />} />
+        <Route path="/practice-from-text" element={<PracticeFromText />} />
         <Route path="/case-helper" element={<CaseHelper />} />
         <Route path="/word-order" element={<WordOrderTrainer />} />
         <Route path="/missions" element={<Missions />} />

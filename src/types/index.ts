@@ -1,5 +1,39 @@
 export type Level = 'A1' | 'A2' | 'B1';
 
+export type VocabularyArticle = 'der' | 'die' | 'das' | 'plural' | 'none';
+export type VocabularyWordType = 'noun' | 'verb' | 'adjective' | 'phrase' | 'other';
+export type VocabularyTopic =
+  | 'daily-life'
+  | 'work'
+  | 'doctor'
+  | 'apartment'
+  | 'shopping'
+  | 'travel'
+  | 'study'
+  | 'custom';
+
+export type MistakeSource =
+  | 'sentence-builder'
+  | 'vocabulary'
+  | 'text-practice'
+  | 'word-order'
+  | 'case-helper'
+  | 'writing-practice';
+
+export type PracticeExerciseType =
+  | 'meaning'
+  | 'article'
+  | 'fill-blank'
+  | 'reverse'
+  | 'sentence-writing'
+  | 'word-order'
+  | 'capitalization'
+  | 'vocabulary-guess'
+  | 'reading-comprehension'
+  | 'mistake-review'
+  | 'weak-topic'
+  | 'writing';
+
 export type ExerciseType =
   | 'Sentence Builder'
   | 'Case Helper'
@@ -91,6 +125,48 @@ export interface VocabularyEntry {
   };
 }
 
+export interface UserVocabularyItem {
+  id: string;
+  germanWord: string;
+  englishMeaning: string;
+  article: VocabularyArticle;
+  pluralForm: string;
+  wordType: VocabularyWordType;
+  level: Level;
+  topic: VocabularyTopic;
+  exampleSentence: string;
+  notes: string;
+  createdAt: string;
+  reviewCount: number;
+  lastReviewedAt: string | null;
+  mistakeCount: number;
+}
+
+export interface PracticeExercise {
+  id: string;
+  type: PracticeExerciseType;
+  source: MistakeSource | 'daily-practice';
+  topic: string;
+  question: string;
+  prompt?: string;
+  options?: string[];
+  correctAnswer: string;
+  explanation: string;
+  originalSentence?: string;
+  displaySentence?: string;
+  relatedWordId?: string;
+  germanWord?: string;
+  requiresSentenceCheck?: boolean;
+}
+
+export interface TextPracticeSession {
+  id: string;
+  originalText: string;
+  generatedExercises: PracticeExercise[];
+  vocabularyCandidates: string[];
+  createdAt: string;
+}
+
 export interface WritingPrompt {
   id: string;
   level: Level;
@@ -102,13 +178,23 @@ export interface WritingPrompt {
 
 export interface Mistake {
   id: string;
-  date: string;
-  exerciseType: ExerciseType;
+  source: MistakeSource;
+  topic: string;
+  question: string;
   userAnswer: string;
   correctAnswer: string;
   explanation: string;
-  topic: string;
-  status: ReviewStatus;
+  relatedWordId?: string;
+  germanWord?: string;
+  originalSentence?: string;
+  createdAt: string;
+  nextReviewAt: string;
+  reviewStage: number;
+  reviewCount: number;
+  isResolved: boolean;
+  exerciseType?: ExerciseType;
+  date?: string;
+  status?: ReviewStatus;
   sourceId?: string;
 }
 
@@ -117,4 +203,12 @@ export interface ProgressState {
   correctAnswers: number;
   missionsCompleted: string[];
   topicsPractised: Record<string, number>;
+}
+
+export interface DailyPracticeSession {
+  date: string;
+  exercises: PracticeExercise[];
+  completedExerciseIds: string[];
+  score: number;
+  createdAt: string;
 }

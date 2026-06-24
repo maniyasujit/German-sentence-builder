@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { NotebookTabs, Target, Trophy } from 'lucide-react';
+import { CalendarCheck, NotebookTabs, Target, Trophy } from 'lucide-react';
 import { getMistakes, getProgress } from '../utils/localStorage';
 import { getAccuracy, getRecommendedTopic } from '../utils/progress';
+import { getDueMistakes, getVocabulary } from '../utils/storage';
 import type { Mistake, ProgressState } from '../types';
 
 export default function ProgressCard() {
@@ -21,6 +22,8 @@ export default function ProgressCard() {
 
   const accuracy = getAccuracy(progress);
   const topic = getRecommendedTopic(mistakes, progress);
+  const dueReviews = getDueMistakes().length;
+  const vocabularyCount = getVocabulary().length;
 
   return (
     <aside className="rounded-lg border border-stone-200 bg-white p-5 shadow-soft">
@@ -38,12 +41,12 @@ export default function ProgressCard() {
           <p className="mt-1 text-2xl font-semibold">{accuracy}%</p>
         </div>
         <div className="rounded-lg bg-slatewash p-3">
-          <p className="text-sm text-stone-600">Open mistakes</p>
-          <p className="mt-1 text-2xl font-semibold">{mistakes.filter((mistake) => mistake.status === 'open').length}</p>
+          <p className="text-sm text-stone-600">Due reviews</p>
+          <p className="mt-1 text-2xl font-semibold">{dueReviews}</p>
         </div>
         <div className="rounded-lg bg-slatewash p-3">
-          <p className="text-sm text-stone-600">Missions done</p>
-          <p className="mt-1 text-2xl font-semibold">{progress.missionsCompleted.length}</p>
+          <p className="text-sm text-stone-600">Saved words</p>
+          <p className="mt-1 text-2xl font-semibold">{vocabularyCount}</p>
         </div>
       </div>
 
@@ -56,11 +59,18 @@ export default function ProgressCard() {
           </div>
         </div>
         <Link
-          to="/mistakes"
+          to="/today"
           className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-ink px-4 text-sm font-semibold text-white hover:bg-fern"
         >
+          <CalendarCheck aria-hidden="true" size={16} />
+          Start practice
+        </Link>
+        <Link
+          to="/mistakes"
+          className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-stone-300 bg-white px-4 text-sm font-semibold text-stone-700 hover:bg-slatewash"
+        >
           <NotebookTabs aria-hidden="true" size={16} />
-          Review notebook
+          Notebook
         </Link>
       </div>
     </aside>

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import {
   ArrowRight,
   BookOpen,
+  CalendarCheck,
   ClipboardList,
   Layers,
   NotebookTabs,
@@ -9,9 +10,30 @@ import {
   Route,
   Sparkles,
 } from 'lucide-react';
+import DailyPracticeCard from '../components/DailyPracticeCard';
 import ProgressCard from '../components/ProgressCard';
+import { generateDailyPracticeSession } from '../utils/dailyPractice';
+import { getDueMistakes, getVocabulary, getWeakTopics } from '../utils/storage';
 
 const tools = [
+  {
+    title: "Today’s Practice",
+    description: 'A personal daily set from due mistakes, saved words, pasted text, weak topics, and writing.',
+    to: '/today',
+    icon: CalendarCheck,
+  },
+  {
+    title: 'My Vocabulary',
+    description: 'Save your own German words with articles, examples, notes, and personal practice questions.',
+    to: '/my-vocabulary',
+    icon: BookOpen,
+  },
+  {
+    title: 'Practice From Text',
+    description: 'Paste a German message or paragraph and generate local exercises without an AI API.',
+    to: '/practice-from-text',
+    icon: PenLine,
+  },
   {
     title: 'Sentence Builder',
     description: 'Build real German sentences from English prompts and learn why each case, article, and verb position works.',
@@ -51,6 +73,11 @@ const tools = [
 ];
 
 export default function Home() {
+  const vocabulary = getVocabulary();
+  const dueMistakes = getDueMistakes();
+  const weakTopic = getWeakTopics()[0];
+  const todaySession = generateDailyPracticeSession();
+
   return (
     <div className="space-y-8">
       <section className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
@@ -72,17 +99,23 @@ export default function Home() {
           </div>
           <div className="flex flex-wrap gap-3">
             <Link
-              to="/sentence-builder"
+              to="/today"
               className="inline-flex min-h-12 items-center gap-2 rounded-lg bg-ink px-5 text-base font-semibold text-white hover:bg-fern"
             >
-              Start learning
+              Start Today’s Practice
               <ArrowRight aria-hidden="true" size={18} />
             </Link>
             <Link
-              to="/case-helper"
+              to="/my-vocabulary"
               className="inline-flex min-h-12 items-center gap-2 rounded-lg border border-stone-300 bg-white px-5 text-base font-semibold text-stone-800 hover:bg-slatewash"
             >
-              Try case helper
+              Add vocabulary
+            </Link>
+            <Link
+              to="/practice-from-text"
+              className="inline-flex min-h-12 items-center gap-2 rounded-lg border border-stone-300 bg-white px-5 text-base font-semibold text-stone-800 hover:bg-slatewash"
+            >
+              Paste German text
             </Link>
           </div>
         </div>
@@ -111,6 +144,28 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <DailyPracticeCard
+        session={todaySession}
+        dueReviews={dueMistakes.length}
+        savedWords={vocabulary.length}
+        weakTopic={weakTopic?.topic ?? 'none yet'}
+      />
+
+      {vocabulary.length === 0 ? (
+        <section className="grid gap-4 md:grid-cols-3">
+          {[
+            ['Add vocabulary', 'Save words you actually need, with article and example sentence.', '/my-vocabulary'],
+            ['Paste German text', 'Turn your own message or email into fill blanks, word order, and vocabulary practice.', '/practice-from-text'],
+            ['Start sample practice', 'Use the existing sentence and word-order trainers while your personal bank grows.', '/sentence-builder'],
+          ].map(([title, description, to]) => (
+            <Link key={title} to={to} className="rounded-lg border border-stone-200 bg-white p-5 shadow-sm hover:shadow-soft">
+              <h2 className="text-lg font-semibold text-ink">{title}</h2>
+              <p className="mt-2 text-sm leading-6 text-stone-600">{description}</p>
+            </Link>
+          ))}
+        </section>
+      ) : null}
 
       <ProgressCard />
 

@@ -7,7 +7,7 @@ export function getAccuracy(progress: ProgressState): number {
 
 export function getRecommendedTopic(mistakes: Mistake[], progress: ProgressState): string {
   const openMistakeTopics = mistakes
-    .filter((mistake) => mistake.status === 'open')
+    .filter((mistake) => !mistake.isResolved)
     .reduce<Record<string, number>>((totals, mistake) => {
       totals[mistake.topic] = (totals[mistake.topic] ?? 0) + 1;
       return totals;
