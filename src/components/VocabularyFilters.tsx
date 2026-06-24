@@ -36,7 +36,7 @@ export default function VocabularyFilters({ filters, onChange }: VocabularyFilte
           />
         </label>
         <Select label="Topic" value={filters.topic} options={topics} onChange={(value) => update('topic', value)} />
-        <Select label="Level" value={filters.level} options={['all', 'A1', 'A2', 'B1']} onChange={(value) => update('level', value)} />
+        <Select label="Level" value={filters.level} options={['all', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2']} onChange={(value) => update('level', value)} />
         <Select label="Type" value={filters.wordType} options={wordTypes} onChange={(value) => update('wordType', value)} />
         <Select label="Article" value={filters.article} options={articles} onChange={(value) => update('article', value)} />
         <Select

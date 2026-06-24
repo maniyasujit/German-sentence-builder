@@ -14,7 +14,7 @@ type VocabularyFormValue = Omit<
 
 const articles: VocabularyArticle[] = ['none', 'der', 'die', 'das', 'plural'];
 const wordTypes: VocabularyWordType[] = ['noun', 'verb', 'adjective', 'phrase', 'other'];
-const levels: Level[] = ['A1', 'A2', 'B1'];
+const levels: Level[] = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
 const topics: VocabularyTopic[] = ['daily-life', 'work', 'doctor', 'apartment', 'shopping', 'travel', 'study', 'custom'];
 
 const emptyValue: VocabularyFormValue = {

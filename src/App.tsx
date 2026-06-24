@@ -7,6 +7,7 @@ import Missions from './pages/Missions';
 import MyVocabulary from './pages/MyVocabulary';
 import PracticeFromText from './pages/PracticeFromText';
 import Progress from './pages/Progress';
+import SentencePracticePage from './pages/SentencePracticePage';
 import SentenceBuilder from './pages/SentenceBuilder';
 import TodaysPractice from './pages/TodaysPractice';
 import VocabularyContext from './pages/VocabularyContext';
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="/today" element={<TodaysPractice />} />
         <Route path="/my-vocabulary" element={<MyVocabulary />} />
         <Route path="/practice-from-text" element={<PracticeFromText />} />
+        <Route path="/sentence-practice" element={<SentencePracticePage />} />
         <Route path="/case-helper" element={<CaseHelper />} />
         <Route path="/word-order" element={<WordOrderTrainer />} />
         <Route path="/missions" element={<Missions />} />

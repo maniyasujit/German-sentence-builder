@@ -5,6 +5,7 @@ German Sentence Builder is a free React/Vite MVP for learners who know German vo
 ## Features
 
 - Sentence Builder with 20 A1/A2 starter exercises
+- Sentence Practice page for A1 through C2 sentence pairs with translation reveal and direction switching
 - My Vocabulary page for adding, editing, deleting, filtering, and practising user-saved words
 - Practice From Text page that creates local exercises from pasted German text
 - Today’s Practice page generated from due mistakes, saved vocabulary, pasted text sessions, weak topics, and a writing prompt
@@ -78,8 +79,14 @@ src/
     DailyPracticeCard.tsx
     EmptyState.tsx
     ProgressSummary.tsx
+    SentenceCard.tsx
+    LevelSelector.tsx
+    LanguageDirectionToggle.tsx
+    TranslationButton.tsx
+    NextSentenceButton.tsx
   pages/
     Home.tsx
+    SentencePracticePage.tsx
     MyVocabulary.tsx
     PracticeFromText.tsx
     TodaysPractice.tsx
@@ -99,7 +106,14 @@ src/
     vocabularyContext.ts
     writingPrompts.ts
     grammarHighlights.ts
+    german_a1_sentences.json
+    german_a2_sentences.json
+    german_b1_sentences.json
+    german_b2_sentences.json
+    german_c1_sentences.json
+    german_c2_sentences.json
   utils/
+    sentenceDataLoader.ts
     storage.ts
     vocabularyGenerator.ts
     textExerciseGenerator.ts
@@ -128,6 +142,41 @@ Edit `src/data/sentenceExercises.ts` and add an object with:
 - `grammarTags`
 
 Keep explanations practical and contextual. Explain the case, article, preposition, or word-order reason behind the answer.
+
+### Add sentence-practice data
+
+Sentence practice datasets live in:
+
+- `src/data/german_a1_sentences.json`
+- `src/data/german_a2_sentences.json`
+- `src/data/german_b1_sentences.json`
+- `src/data/german_b2_sentences.json`
+- `src/data/german_c1_sentences.json`
+- `src/data/german_c2_sentences.json`
+
+Each dataset uses the same shape:
+
+```json
+{
+  "metadata": {
+    "title": "German A1 Sentence Dataset",
+    "level": "A1",
+    "count": 40
+  },
+  "sentences": [
+    {
+      "id": "a1_0001",
+      "level": "A1",
+      "topic": "introductions",
+      "template": "name_statement",
+      "german": "Ich heiße Mira.",
+      "english": "My name is Mira."
+    }
+  ]
+}
+```
+
+`src/utils/sentenceDataLoader.ts` loads the selected JSON file dynamically. Later, that utility can be replaced with an API/database call without changing `SentencePracticePage`.
 
 ### Add case-helper exercises
 
@@ -201,6 +250,8 @@ The app stores learner data in the browser:
 - `germanApp:mistakes`
 - `germanApp:textPracticeSessions`
 - `germanApp:dailyPractice`
+- `germanApp:sentencePracticeLevel`
+- `germanApp:sentencePracticeDirection`
 - `gsb-progress`
 
 The Progress page includes controls to export data as JSON, import it later, or clear all local data.

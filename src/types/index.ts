@@ -1,4 +1,5 @@
-export type Level = 'A1' | 'A2' | 'B1';
+export type Level = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
+export type LanguageDirection = 'de-en' | 'en-de';
 
 export type VocabularyArticle = 'der' | 'die' | 'das' | 'plural' | 'none';
 export type VocabularyWordType = 'noun' | 'verb' | 'adjective' | 'phrase' | 'other';
@@ -52,6 +53,26 @@ export interface SentenceExercise {
   wordBank: string[];
   explanation: string;
   grammarTags: string[];
+}
+
+export interface SentencePracticeSentence {
+  id: string;
+  level: Level;
+  topic: string;
+  template: string;
+  german: string;
+  english: string;
+}
+
+export interface SentenceDataset {
+  metadata: {
+    title: string;
+    level: Level;
+    count: number;
+    description?: string;
+    schema?: Record<string, string>;
+  };
+  sentences: SentencePracticeSentence[];
 }
 
 export interface CaseExercise {

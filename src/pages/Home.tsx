@@ -5,6 +5,7 @@ import {
   CalendarCheck,
   ClipboardList,
   Layers,
+  Languages,
   NotebookTabs,
   PenLine,
   Route,
@@ -16,6 +17,12 @@ import { generateDailyPracticeSession } from '../utils/dailyPractice';
 import { getDueMistakes, getVocabulary, getWeakTopics } from '../utils/storage';
 
 const tools = [
+  {
+    title: 'Practice Sentences',
+    description: 'Practise A1 through C2 sentence pairs one at a time and switch between German → English or English → German.',
+    to: '/sentence-practice',
+    icon: Languages,
+  },
   {
     title: "Today’s Practice",
     description: 'A personal daily set from due mistakes, saved words, pasted text, weak topics, and writing.',
@@ -99,11 +106,17 @@ export default function Home() {
           </div>
           <div className="flex flex-wrap gap-3">
             <Link
-              to="/today"
+              to="/sentence-practice"
               className="inline-flex min-h-12 items-center gap-2 rounded-lg bg-ink px-5 text-base font-semibold text-white hover:bg-fern"
             >
-              Start Today’s Practice
+              Practice Sentences
               <ArrowRight aria-hidden="true" size={18} />
+            </Link>
+            <Link
+              to="/today"
+              className="inline-flex min-h-12 items-center gap-2 rounded-lg border border-stone-300 bg-white px-5 text-base font-semibold text-stone-800 hover:bg-slatewash"
+            >
+              Today’s Practice
             </Link>
             <Link
               to="/my-vocabulary"
