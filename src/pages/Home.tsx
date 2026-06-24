@@ -37,7 +37,7 @@ const tools = [
   },
   {
     title: 'Practice From Text',
-    description: 'Paste a German message or paragraph and generate local exercises without an AI API.',
+    description: 'Paste a German message or paragraph and turn it into focused practice.',
     to: '/practice-from-text',
     icon: PenLine,
   },
@@ -67,7 +67,7 @@ const tools = [
   },
   {
     title: 'Mistake Notebook',
-    description: 'Wrong answers are saved locally with grammar notes so you can review the exact patterns that need work.',
+    description: 'Review previous mistakes with grammar notes so you can practise the exact patterns that need work.',
     to: '/mistakes',
     icon: NotebookTabs,
   },

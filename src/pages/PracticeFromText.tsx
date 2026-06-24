@@ -79,7 +79,7 @@ export default function PracticeFromText() {
       {!activeSession ? (
         <EmptyState
           title="Paste a German message or paragraph to create real practice from your own content."
-          description="The generator works locally. It creates fill blanks, word order, capitalization, vocabulary noticing, and simple reading questions."
+          description="Create fill blanks, word order, capitalization, vocabulary noticing, and simple reading questions."
         />
       ) : (
         <div className="grid gap-6 lg:grid-cols-[1fr_20rem]">

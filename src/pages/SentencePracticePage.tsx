@@ -72,7 +72,7 @@ export default function SentencePracticePage() {
   return (
     <div className="space-y-6">
       <section className="rounded-lg border border-stone-200 bg-white p-5 shadow-soft sm:p-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <Link
               to="/"
@@ -88,9 +88,9 @@ export default function SentencePracticePage() {
             </p>
           </div>
 
-          <div className="grid w-full gap-4 lg:w-[34rem] lg:grid-cols-[10rem_1fr]">
-            <LevelSelector value={selectedLevel} onChange={setSelectedLevel} />
-            <LanguageDirectionToggle value={direction} onChange={changeDirection} />
+          <div className="grid w-full grid-cols-[7rem_minmax(0,1fr)] gap-2 lg:w-[24rem]">
+            <LevelSelector compact value={selectedLevel} onChange={setSelectedLevel} />
+            <LanguageDirectionToggle compact value={direction} onChange={changeDirection} />
           </div>
         </div>
       </section>

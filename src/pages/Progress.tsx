@@ -23,7 +23,7 @@ export default function Progress() {
 
   const practisedTopics = useMemo(
     () => Object.entries(progress.topicsPractised).sort((a, b) => b[1] - a[1]),
-    // refreshKey is intentionally included because progress is loaded from localStorage.
+    // refreshKey is intentionally included so dashboard values update after data changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [progress.topicsPractised, refreshKey],
   );
@@ -38,7 +38,7 @@ export default function Progress() {
         <p className="text-sm font-semibold uppercase tracking-normal text-coral">Dashboard</p>
         <h1 className="mt-2 text-3xl font-semibold text-ink">Progress</h1>
         <p className="mt-2 max-w-2xl text-stone-600">
-          Your vocabulary, mistakes, pasted text sessions, and daily practice stay in this browser.
+          Track your vocabulary, mistakes, pasted text sessions, and daily practice.
         </p>
       </section>
 

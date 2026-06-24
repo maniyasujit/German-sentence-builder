@@ -49,7 +49,7 @@ export default function ProgressSummary({
   function clearData() {
     clearAllLocalData();
     setExportText('');
-    setMessage('Local data cleared from this browser.');
+    setMessage('Practice data cleared.');
     onDataChanged();
   }
 
@@ -65,9 +65,9 @@ export default function ProgressSummary({
       </div>
 
       <div className="rounded-lg bg-slatewash p-4">
-        <p className="text-sm font-semibold text-ink">Privacy controls</p>
+        <p className="text-sm font-semibold text-ink">Data tools</p>
         <p className="mt-1 text-sm text-stone-600">
-          Your data stays in this browser. Export it as JSON, import it later, or clear it completely.
+          Export your practice data as JSON, import it later, or reset your practice history.
         </p>
         <div className="mt-4 flex flex-wrap gap-3">
           <button
@@ -92,7 +92,7 @@ export default function ProgressSummary({
             className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-rose-200 bg-white px-4 text-sm font-semibold text-rose-700 hover:bg-rose-50"
           >
             <Trash2 aria-hidden="true" size={16} />
-            Clear all local data
+            Clear practice data
           </button>
           <input ref={inputRef} type="file" accept="application/json,.json" onChange={importData} className="hidden" />
         </div>
@@ -103,7 +103,7 @@ export default function ProgressSummary({
             value={exportText}
             rows={8}
             className="mt-3 w-full rounded-lg border border-stone-300 bg-white p-3 text-xs"
-            aria-label="Exported local data JSON"
+            aria-label="Exported practice data JSON"
           />
         ) : null}
       </div>

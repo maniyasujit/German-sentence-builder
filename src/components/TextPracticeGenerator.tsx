@@ -44,7 +44,7 @@ export default function TextPracticeGenerator({ onSessionCreated }: TextPractice
       <p className="text-sm font-semibold uppercase tracking-normal text-coral">Practice From Text</p>
       <h1 className="mt-2 text-3xl font-semibold text-ink">Paste German text</h1>
       <p className="mt-2 max-w-3xl text-stone-600">
-        Create exercises locally from a message, email, letter, short article, or paragraph.
+        Create exercises from a message, email, letter, short article, or paragraph.
       </p>
 
       <textarea

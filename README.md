@@ -1,24 +1,23 @@
 # German Sentence Builder
 
-German Sentence Builder is a free React/Vite MVP for learners who know German vocabulary but need help using it in correct sentences. It teaches grammar in context and now creates personal practice from the learner’s own words, pasted German text, and previous mistakes.
+German Sentence Builder helps learners move from knowing German vocabulary to building correct German sentences. It teaches grammar in context through sentence practice, saved words, pasted German text, and previous mistakes.
 
 ## Features
 
 - Sentence Builder with 20 A1/A2 starter exercises
 - Sentence Practice page for A1 through C2 sentence pairs with translation reveal and direction switching
 - My Vocabulary page for adding, editing, deleting, filtering, and practising user-saved words
-- Practice From Text page that creates local exercises from pasted German text
+- Practice From Text page that creates exercises from pasted German text
 - Today’s Practice page generated from due mistakes, saved vocabulary, pasted text sessions, weak topics, and a writing prompt
 - Spaced review mistake model with next-review dates and weak-topic detection
 - Case Helper for Nominativ, Akkusativ, and Dativ decisions
 - Word Order Trainer with 20 exercises for main clauses, questions, modal verbs, Perfekt, and subordinate clauses
 - Real-Life Missions for introductions, supermarket, doctor appointment, apartment issues, job interviews, and Ausländerbehörde appointment language
-- Mistake Notebook saved in `localStorage`
+- Mistake Notebook for reviewing previous errors and explanations
 - Vocabulary in Context for 12 common German words
 - Writing Practice with self-check checklists and model answers
-- Local progress dashboard
-- Export, import, and clear local learner data
-- No backend, no login, no paid APIs
+- Progress dashboard
+- Export, import, and clear learner data
 
 ## Setup
 
@@ -27,7 +26,7 @@ npm install
 npm run dev
 ```
 
-Open the local URL shown by Vite.
+Open the URL shown by Vite.
 
 ## Build
 
@@ -119,7 +118,6 @@ src/
     textExerciseGenerator.ts
     mistakeReview.ts
     dailyPractice.ts
-    localStorage.ts
     answerCheck.ts
     progress.ts
   types/
@@ -176,7 +174,7 @@ Each dataset uses the same shape:
 }
 ```
 
-`src/utils/sentenceDataLoader.ts` loads the selected JSON file dynamically. Later, that utility can be replaced with an API/database call without changing `SentencePracticePage`.
+`src/utils/sentenceDataLoader.ts` centralizes sentence loading for the practice page.
 
 ### Add case-helper exercises
 
@@ -203,7 +201,7 @@ Edit `src/data/vocabularyContext.ts`. Each word should include a meaning, common
 
 ### Add user vocabulary fields
 
-The personal vocabulary model lives in `src/types/index.ts` as `UserVocabularyItem`. User-saved words are stored in `localStorage` under `germanApp:vocabulary`.
+The personal vocabulary model lives in `src/types/index.ts` as `UserVocabularyItem`.
 
 Each item includes:
 
@@ -236,30 +234,8 @@ Wrong answers are saved as scheduled mistakes.
 
 ### Practice From Text
 
-`src/utils/textExerciseGenerator.ts` processes pasted German text locally. It can split text into sentences, tokenize sentences, detect likely capitalized nouns, create fill blanks, create word-order exercises, create capitalization exercises, extract vocabulary candidates, and create simple reading questions when time words are present.
+`src/utils/textExerciseGenerator.ts` processes pasted German text. It can split text into sentences, tokenize sentences, detect likely capitalized nouns, create fill blanks, create word-order exercises, create capitalization exercises, extract vocabulary candidates, and create simple reading questions when time words are present.
 
 ### Today’s Practice
 
-`src/utils/dailyPractice.ts` keeps one generated session per day in `localStorage`. Refreshing on the same day keeps the same session. A new day generates a new session.
-
-## LocalStorage Notes
-
-The app stores learner data in the browser:
-
-- `germanApp:vocabulary`
-- `germanApp:mistakes`
-- `germanApp:textPracticeSessions`
-- `germanApp:dailyPractice`
-- `germanApp:sentencePracticeLevel`
-- `germanApp:sentencePracticeDirection`
-- `gsb-progress`
-
-The Progress page includes controls to export data as JSON, import it later, or clear all local data.
-
-## Known MVP Limitations
-
-- No account system or cloud sync
-- No backend
-- No AI writing correction
-- No pronunciation scoring
-- No textbook or copyrighted content
+`src/utils/dailyPractice.ts` keeps one generated session per day. Refreshing on the same day keeps the same session. A new day generates a new session.
