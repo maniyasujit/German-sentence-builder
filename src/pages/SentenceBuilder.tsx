@@ -5,6 +5,7 @@ import WordBank from '../components/WordBank';
 import { sentenceExercises } from '../data/sentenceExercises';
 import { isAnswerCorrect, joinTokens } from '../utils/answerCheck';
 import { recordExerciseResult, saveMistake } from '../utils/localStorage';
+import { shuffleItems } from '../utils/shuffle';
 
 export default function SentenceBuilder() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -12,9 +13,10 @@ export default function SentenceBuilder() {
   const [answer, setAnswer] = useState('');
   const [result, setResult] = useState<'correct' | 'incorrect' | null>(null);
   const exercise = sentenceExercises[currentIndex];
+  const shuffledWordBank = useMemo(() => shuffleItems(exercise.wordBank), [exercise.id, exercise.wordBank]);
   const selectedSentence = useMemo(
-    () => joinTokens(selectedIndexes.map((index) => exercise.wordBank[index])),
-    [exercise.wordBank, selectedIndexes],
+    () => joinTokens(selectedIndexes.map((index) => shuffledWordBank[index])),
+    [selectedIndexes, shuffledWordBank],
   );
 
   useEffect(() => {
@@ -26,13 +28,13 @@ export default function SentenceBuilder() {
   function addWord(index: number) {
     const next = [...selectedIndexes, index];
     setSelectedIndexes(next);
-    setAnswer(joinTokens(next.map((wordIndex) => exercise.wordBank[wordIndex])));
+    setAnswer(joinTokens(next.map((wordIndex) => shuffledWordBank[wordIndex])));
   }
 
   function removeLast() {
     const next = selectedIndexes.slice(0, -1);
     setSelectedIndexes(next);
-    setAnswer(joinTokens(next.map((wordIndex) => exercise.wordBank[wordIndex])));
+    setAnswer(joinTokens(next.map((wordIndex) => shuffledWordBank[wordIndex])));
   }
 
   function clearAnswer() {
@@ -92,7 +94,7 @@ export default function SentenceBuilder() {
           </div>
 
           <WordBank
-            words={exercise.wordBank}
+            words={shuffledWordBank}
             selectedIndexes={selectedIndexes}
             onAdd={addWord}
             onRemoveLast={removeLast}
@@ -133,7 +135,7 @@ export default function SentenceBuilder() {
         result={result}
         correctAnswer={exercise.correctAnswer}
         explanation={exercise.explanation}
-        onTryAgain={() => setResult(null)}
+        onTryAgain={clearAnswer}
         onNext={nextExercise}
       />
     </div>

@@ -5,6 +5,7 @@ import WordBank from '../components/WordBank';
 import { wordOrderExercises } from '../data/wordOrderExercises';
 import { isAnswerCorrect, joinTokens } from '../utils/answerCheck';
 import { recordExerciseResult, saveMistake } from '../utils/localStorage';
+import { shuffleItems } from '../utils/shuffle';
 
 export default function WordOrderTrainer() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -12,9 +13,10 @@ export default function WordOrderTrainer() {
   const [answer, setAnswer] = useState('');
   const [result, setResult] = useState<'correct' | 'incorrect' | null>(null);
   const exercise = wordOrderExercises[currentIndex];
+  const shuffledWordBank = useMemo(() => shuffleItems(exercise.wordBank), [exercise.id, exercise.wordBank]);
   const selectedSentence = useMemo(
-    () => joinTokens(selectedIndexes.map((index) => exercise.wordBank[index])),
-    [exercise.wordBank, selectedIndexes],
+    () => joinTokens(selectedIndexes.map((index) => shuffledWordBank[index])),
+    [selectedIndexes, shuffledWordBank],
   );
 
   useEffect(() => {
@@ -26,13 +28,13 @@ export default function WordOrderTrainer() {
   function addWord(index: number) {
     const next = [...selectedIndexes, index];
     setSelectedIndexes(next);
-    setAnswer(joinTokens(next.map((wordIndex) => exercise.wordBank[wordIndex])));
+    setAnswer(joinTokens(next.map((wordIndex) => shuffledWordBank[wordIndex])));
   }
 
   function removeLast() {
     const next = selectedIndexes.slice(0, -1);
     setSelectedIndexes(next);
-    setAnswer(joinTokens(next.map((wordIndex) => exercise.wordBank[wordIndex])));
+    setAnswer(joinTokens(next.map((wordIndex) => shuffledWordBank[wordIndex])));
   }
 
   function clearAnswer() {
@@ -80,7 +82,7 @@ export default function WordOrderTrainer() {
           </div>
 
           <WordBank
-            words={exercise.wordBank}
+            words={shuffledWordBank}
             selectedIndexes={selectedIndexes}
             onAdd={addWord}
             onRemoveLast={removeLast}
@@ -121,7 +123,7 @@ export default function WordOrderTrainer() {
         result={result}
         correctAnswer={exercise.correctAnswer}
         explanation={exercise.explanation}
-        onTryAgain={() => setResult(null)}
+        onTryAgain={clearAnswer}
         onNext={nextExercise}
       />
     </div>

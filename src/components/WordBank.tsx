@@ -1,4 +1,4 @@
-import { RotateCcw, Undo2, X } from 'lucide-react';
+import { RotateCcw, Undo2 } from 'lucide-react';
 
 interface WordBankProps {
   words: string[];
@@ -47,10 +47,6 @@ export default function WordBank({ words, selectedIndexes, onAdd, onRemoveLast, 
           <RotateCcw aria-hidden="true" size={16} />
           Reset
         </button>
-        <span className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-slatewash px-3 text-sm text-stone-600">
-          <X aria-hidden="true" size={15} />
-          Click words in order
-        </span>
       </div>
     </div>
   );
